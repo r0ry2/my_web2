@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Crochet Rory Store{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <!-- الشريط العلوي -->
+  <header style="background-color:#ffb6c1; color:#333; text-align:center; padding:8px; font-weight:bold;">
+    ✨ Use code: Rory for 2% off! ✨
+  </header>
+
+  <!-- العنوان الرئيسي -->
+  <div style="background-color:#ffe4ef; padding:10px 0; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+    <h1 style="color:#e26fa7; font-family:'Poppins',sans-serif; font-size:2.5rem; text-shadow:1px 1px 2px white; margin:10px 0;">
+      Crochet Rory Store
+    </h1>
+  </div>
+
+  <!-- ✅ عرض فقط رسائل النجاح (مثل "تم تسجيل دخولك") -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div style="max-width:600px; margin:20px auto;">
+        {% for category, message in messages %}
+          {% if category == 'success' %}
+            <div style="padding:10px; border-radius:8px; margin-bottom:10px; text-align:center;
+                        background-color:#e26fa7; color:#white; border:1px solid #c3e6cb;">
+              💖 {{ message }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- المحتوى الخاص بكل صفحة -->
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- الفوتر -->
+  <footer style="text-align:center; padding:20px; background-color:#ffe4ef; color:#555; margin-top:50px;">
+    © 2024 Crochet Rory Store. All rights reserved.
+  </footer>
+</body>
+</html>

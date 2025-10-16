@@ -1,0 +1,38 @@
+import os
+from werkzeug.utils import secure_filename
+
+@app.route('/admin/edit_product/<int:id>', methods=['GET', 'POST'])
+def edit_product(id):
+    if not session.get('is_admin'):
+        flash('Access denied. Admins only!', 'danger')
+        return redirect(url_for('login'))
+
+    product = Product.query.get_or_404(id)
+    form = AddProductForm(obj=product)
+
+    if form.validate_on_submit():
+        # تحديث بيانات المنتج
+        product.name = form.name.data
+        product.price = form.price.data
+        product.description = form.description.data
+
+        # لو تم رفع صورة جديدة، نحفظها ونستبدل القديمة
+        if form.image.data:
+            image_file = form.image.data
+            filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.root_path, 'static/images', filename)
+            image_file.save(image_path)
+
+            # نحذف الصورة القديمة لو كانت موجودة
+            if product.image:
+                old_path = os.path.join(app.root_path, 'static/images', product.image)
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+
+            product.image = filename
+
+        db.session.commit()
+        flash('✅ Product updated successfully!', 'success')
+        return redirect(url_for('admin_products'))
+
+    return render_template('admin/add_product.html', form=form, product=product, edit_mode=True)

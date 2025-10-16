@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmation | Crochet Rory Store</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #ffe4ef;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      background-color: #ffb6c1;
+      color: #333;
+      padding: 10px 0;
+      font-weight: bold;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #e26fa7;
+      margin-top: 30px;
+      text-shadow: 1px 1px 2px white;
+    }
+
+    .confirmation-box {
+      background: white;
+      width: 60%;
+      max-width: 600px;
+      margin: 40px auto;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #444;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+
+    .order-id {
+      background-color: #ffe0ec;
+      padding: 10px;
+      border-radius: 10px;
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #e26fa7;
+      font-weight: bold;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      background: #fff4f8;
+      padding: 12px 20px;
+      margin: 10px 0;
+      border-radius: 10px;
+      font-size: 1rem;
+      color: #555;
+    }
+
+    .total {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #444;
+    }
+
+    .back-btn {
+      background-color: #e26fa7;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: 0.3s;
+    }
+
+    .back-btn:hover {
+      background-color: #c85a8c;
+    }
+
+    footer {
+      margin-top: 50px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <header>✨ Use code: Rory for 2% off! ✨</header>
+
+  <h1>🎀 Order Confirmed!</h1>
+
+  <div class="confirmation-box">
+    <h2>🧺 Your Order Details</h2>
+    <p class="order-id">Order ID: <span id="order-id">...</span></p>
+
+    <ul id="order-items"></ul>
+
+    <p class="total">Total: <span id="order-total"></span> TUB</p>
+
+    <button class="back-btn" onclick="window.location.href='/'">Continue Shopping 🛍️</button>
+  </div>
+
+  <footer>© 2024 Crochet Rory Store. All rights reserved.</footer>
+
+  <script>
+    async function loadOrderDetails() {
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get("id");
+      if (!orderId) {
+        document.body.innerHTML = "<h2>❌ Order not found</h2>";
+        return;
+      }
+
+      const res = await fetch(`/api/order/${orderId}`);
+      const data = await res.json();
+
+      document.getElementById("order-id").textContent = data.id;
+      document.getElementById("order-total").textContent = data.total.toFixed(2);
+
+      const list = document.getElementById("order-items");
+      data.items.forEach(item => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <span>${item.name} x${item.quantity}</span>
+          <span>${(item.price * item.quantity).toFixed(2)} TUB</span>`;
+        list.appendChild(li);
+      });
+    }
+
+    loadOrderDetails();
+  </script>
+</body>
+</html>

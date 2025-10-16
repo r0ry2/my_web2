@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>404 | Page Not Found</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      background-color: #ffe4ef;
+      text-align: center;
+      font-family: "Poppins", sans-serif;
+      color: #444;
+    }
+    img {
+      width: 300px;
+      margin-top: 50px;
+    }
+    h1 {
+      color: #e26fa7;
+      font-size: 2rem;
+      margin: 20px 0;
+    }
+    a {
+      text-decoration: none;
+      background: #e26fa7;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      display: inline-block;
+      margin-top: 20px;
+    }
+    a:hover {
+      background: #c85a8c;
+    }
+  </style>
+</head>
+<body>
+  <img src="{{ url_for('static', filename='images/500.png') }}" alt="404 Cat">
+  <h1>Oops! Page Not Found 😿</h1>
+  <p>It seems the page has gone missing... Let's go back home!</p>
+  <a href="/">🏠 Go Home</a>
+</body>
+</html>

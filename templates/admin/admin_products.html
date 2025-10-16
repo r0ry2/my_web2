@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Manage Products | Crochet Rory Store{% endblock %}
+{% block content %}
+
+<div style="background-color:#fff0f6; padding:30px; border-radius:15px; max-width:900px; margin:40px auto; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+  <h2 style="text-align:center; color:#e26fa7;">🧶 Manage Products</h2>
+
+  <div style="text-align:right; margin-bottom:20px;">
+    <a href="{{ url_for('add_product') }}" 
+       style="background:#e26fa7; color:white; padding:10px 20px; border-radius:25px; text-decoration:none;">➕ Add New Product</a>
+  </div>
+
+  <table style="width:100%; border-collapse:collapse;">
+    <thead style="background-color:#ffe4ef;">
+      <tr>
+        <th>ID</th>
+        <th>Image</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr style="border-bottom:1px solid #f3c1d1;">
+        <td style="text-align:center; padding:8px;">{{ product.id }}</td>
+        <td style="text-align:center;">
+          {% if product.image %}
+            <img src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.name }}" style="width:60px; border-radius:8px;">
+          {% else %}
+            <span style="color:#aaa;">No Image</span>
+          {% endif %}
+        </td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.price }} TUB</td>
+        <td style="text-align:center;">
+          <a href="{{ url_for('edit_product', id=product.id) }}" style="background:#e26fa7; color:white; padding:6px 12px; border-radius:10px; text-decoration:none;">✏️ Edit</a>
+          <form action="{{ url_for('delete_product', id=product.id) }}" method="POST" style="display:inline;">
+            <button type="submit" onclick="return confirm('Are you sure?')" 
+                    style="background:#ff6b81; color:white; padding:6px 12px; border:none; border-radius:10px; cursor:pointer;">🗑️ Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" style="text-align:center; padding:15px;">No products found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+<div style="text-align:center; margin-top:30px;">
+  <a href="{{ url_for('admin_home') }}" 
+     style="text-decoration:none; color:#e26fa7; font-weight:bold;">⬅ Back to Home</a>
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}My Cart | Crochet Rory Store{% endblock %}
+{% block content %}
+
+<!-- ====== NAVBAR ====== -->
+<nav style="background-color:white; width:80%; margin:20px auto; border-radius:25px; padding:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+  <ul style="list-style:none; display:flex; justify-content:center; align-items:center; gap:40px; margin:0; padding:0; font-weight:bold;">
+    <li><a href="/" style="text-decoration:none; color:#333;">Home</a></li>
+    <li><a href="{{ url_for('products_page') }}" style="text-decoration:none; color:#333;">Products</a></li>
+    <li><a href="{{ url_for('cart_page') }}" style="text-decoration:none; color:#e26fa7;">Cart</a></li>
+    <li><a href="#contact" style="text-decoration:none; color:#333;">Contact</a></li>
+    {% if session.get('user') %}
+      <li><a href="{{ url_for('logout') }}" style="text-decoration:none; color:#333;">Logout</a></li>
+    {% else %}
+      <li><a href="{{ url_for('login') }}" style="text-decoration:none; color:#333;">Login</a></li>
+    {% endif %}
+  </ul>
+</nav>
+
+<!-- ====== CART CONTENT ====== -->
+<section style="padding:50px 20px; text-align:center; background-color:#fff0f6; min-height:70vh;">
+  <h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">🛍️ Your Shopping Cart</h2>
+
+  <div id="cart-box" style="background:white; width:70%; max-width:700px; margin:auto; border-radius:15px; padding:30px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+    <ul id="cart-list" style="list-style:none; padding:0; margin:0;"></ul>
+    <p id="empty-msg" style="color:#777; margin-top:10px;">Your cart is empty 😿</p>
+
+    <hr style="margin:25px 0; border:none; border-top:1px solid #f2c1d1;">
+
+    <h3 style="color:#e26fa7;">🧾 Customer Information</h3>
+    <input type="text" id="name" placeholder="Full Name" 
+           style="width:90%; padding:10px; margin:10px 0; border-radius:10px; border:1px solid #ddd;">
+    <textarea id="address" placeholder="Address" 
+              style="width:90%; padding:10px; border-radius:10px; border:1px solid #ddd; height:80px; resize:none;"></textarea>
+
+    <button id="checkout" 
+            style="background-color:#e26fa7; color:white; border:none; padding:12px 30px; border-radius:25px; font-size:1.1rem; cursor:pointer; margin-top:20px;">
+      Checkout
+    </button>
+  </div>
+</section>
+
+<script>
+  async function loadCart() {
+    const res = await fetch("/api/cart");
+    const data = await res.json();
+
+    const list = document.getElementById("cart-list");
+    const emptyMsg = document.getElementById("empty-msg");
+
+    list.innerHTML = "";
+    if (data.cart.length === 0) {
+      emptyMsg.style.display = "block";
+    } else {
+      emptyMsg.style.display = "none";
+      data.cart.forEach(item => {
+        const li = document.createElement("li");
+        li.style.cssText = `
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          background:#fff4f8;
+          margin:10px 0;
+          padding:10px 15px;
+          border-radius:10px;
+        `;
+        li.innerHTML = `
+          <div style="display:flex; align-items:center; gap:15px;">
+            <img src="${item.image || '/static/default.jpg'}" alt="${item.name}" 
+                 style="width:60px; height:60px; border-radius:10px; object-fit:cover;">
+            <span><strong>${item.name}</strong><br>${item.quantity} × ${item.price} TUB</span>
+          </div>
+          <button onclick="removeItem(${item.id})" 
+                  style="background:#ff6b81; color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;">
+            ✖
+          </button>
+        `;
+        list.appendChild(li);
+      });
+    }
+  }
+
+  async function removeItem(id) {
+    await fetch("/api/cart/remove", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ product_id: id })
+    });
+    loadCart();
+  }
+
+  document.getElementById("checkout").addEventListener("click", async () => {
+    const name = document.getElementById("name").value.trim();
+    const address = document.getElementById("address").value.trim();
+
+    if (!name || !address) {
+      alert("⚠️ Please enter your name and address before checkout.");
+      return;
+    }
+
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, address })
+    });
+
+    const data = await res.json();
+    if (data.message) {
+      window.location.href = `/checkout?id=${data.order_id}`;
+    } else {
+      alert("❌ " + data.error);
+    }
+  });
+
+  loadCart();
+</script>
+
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}
+  {% if edit_mode %}Edit Product{% else %}Add Product{% endif %} | Crochet Rory Store
+{% endblock %}
+
+{% block content %}
+<div style="background-color:#fff0f6; padding:30px; border-radius:15px; max-width:700px; margin:40px auto; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+  <h2 style="text-align:center; color:#e26fa7;">
+    {% if edit_mode %}✏️ Edit Product{% else %}➕ Add New Product{% endif %}
+  </h2>
+
+  <form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+
+    <!-- 🧵 اسم المنتج -->
+    <div style="margin-bottom:15px;">
+      {{ form.name.label }}<br>
+      {{ form.name(class="form-control", style="width:100%; padding:8px; border-radius:8px; border:1px solid #ffd4e2;") }}
+
+      {% for error in form.name.errors %}
+        <p style="color:red; font-size:14px; margin-top:5px;">⚠️ {{ error }}</p>
+      {% endfor %}
+    </div>
+
+    <!-- 💰 السعر -->
+    <div style="margin-bottom:15px;">
+      {{ form.price.label }}<br>
+      {{ form.price(class="form-control", style="width:100%; padding:8px; border-radius:8px; border:1px solid #ffd4e2;") }}
+
+      {% for error in form.price.errors %}
+        <p style="color:red; font-size:14px; margin-top:5px;">⚠️ {{ error }}</p>
+      {% endfor %}
+    </div>
+
+    <!-- 📜 الوصف -->
+    <div style="margin-bottom:15px;">
+      {{ form.description.label }}<br>
+      {{ form.description(class="form-control", style="width:100%; padding:8px; border-radius:8px; border:1px solid #ffd4e2;") }}
+
+      {% for error in form.description.errors %}
+        <p style="color:red; font-size:14px; margin-top:5px;">⚠️ {{ error }}</p>
+      {% endfor %}
+    </div>
+
+    <!-- 🖼️ الصورة -->
+    <div style="margin-bottom:15px;">
+      {{ form.image.label }}<br>
+      {{ form.image(class="form-control-file", style="margin-top:5px;") }}
+
+      {% for error in form.image.errors %}
+        <p style="color:red; font-size:14px; margin-top:5px;">⚠️ {{ error }}</p>
+      {% endfor %}
+
+      {% if edit_mode and product.image %}
+        <p style="margin-top:10px;">Current Image:</p>
+        <img src="{{ url_for('static', filename='images/' ~ product.image) }}" 
+             alt="Current Image" style="width:150px; border-radius:10px; border:1px solid #ccc;">
+      {% endif %}
+    </div>
+
+    <!-- 🔘 الأزرار -->
+    <div style="text-align:center; margin-top:25px;">
+      <button type="submit" 
+              style="background:#e26fa7; color:white; padding:10px 25px; border:none; border-radius:25px; cursor:pointer;">
+        {% if edit_mode %}💾 Save Changes{% else %}➕ Add Product{% endif %}
+      </button>
+
+      <!-- زر العودة للهوم -->
+      <a href="{{ url_for('admin_dashboard') }}" 
+         style="margin-left:15px; color:#e26fa7; text-decoration:none;">⬅ Back to Admin Home</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

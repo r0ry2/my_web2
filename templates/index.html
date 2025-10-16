@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Crochet Rory Store{% endblock %}
+{% block content %}
+
+<!-- ====== NAVBAR ====== -->
+<div style="background-color:#ffe4ef; padding:10px 0; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+  <nav style="background-color:white; width:80%; margin:0 auto; border-radius:25px; padding:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+    <ul style="list-style:none; display:flex; justify-content:center; align-items:center; gap:40px; margin:0; padding:0; font-weight:bold;">
+      <li><a href="#about-me" style="text-decoration:none; color:#333;">About Me</a></li>
+      <li><a href="{{ url_for('products_page') }}" style="text-decoration:none; color:#333;">Products</a></li>
+      <li><a href="{{ url_for('cart_page') }}" style="text-decoration:none; color:#333;">Cart</a></li>
+      <li><a href="#contact" style="text-decoration:none; color:#333;">Contact</a></li>
+      {% if session.get('user') %}
+        <li><a href="{{ url_for('logout') }}" style="text-decoration:none; color:#333;">Logout</a></li>
+      {% else %}
+        <li><a href="{{ url_for('login') }}" style="text-decoration:none; color:#333;">Login</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+
+</div>
+
+<!-- ====== HERO SECTION ====== -->
+<section class="hero">
+  <img src="{{ url_for('static', filename='images/cattt.jpg') }}" alt="image" class="hero_image">
+  <div class="hero-content">
+    <h1>Shop Our Bestseller</h1>
+    <button onclick="window.location.href='{{ url_for('products_page') }}'">Find your favorite</button>
+  </div>
+</section>
+
+<!-- ====== ABOUT ME ====== -->
+<section id="about-me" style="background-color:#fff0f6; padding:50px 20px; text-align:center;">
+  <h2 style="color:#e26fa7; font-size:2rem;">✨ About Me ✨</h2>
+  <div style="max-width:900px; margin:auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:30px;">
+    <img src="{{ url_for('static', filename='images/tu.jpg') }}" alt="Crochet Art" style="width:260px; border-radius:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+    <p style="flex:1; min-width:300px; text-align:left; font-size:1.1rem; line-height:1.8; color:#444;">
+      Welcome to <strong>Rory’s world</strong>, where craftsmanship meets creativity!  
+      I’m <strong>Reema</strong>, a passionate crocheter who loves transforming yarn into art.  
+      Each creation reflects love, patience, and attention to every detail 🧶💗  
+      Thank you for supporting my small business and being part of this cozy handmade journey ✨
+    </p>
+  </div>
+</section>
+
+<!-- ====== FEATURED PRODUCTS ====== -->
+<section id="featured-products" style="padding:60px 20px; text-align:center;">
+  <h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">🧸 Featured Products 🧸</h2>
+  
+  <div class="product-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:25px; max-width:1000px; margin:auto;">
+    {% for product in products %}
+      <div class="product" style="background:white; border-radius:15px; padding:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+        <img src="{{ product.image }}" alt="{{ product.name }}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
+        <h3 style="color:#e26fa7;">{{ product.name }}</h3>
+        <p>{{ product.price }} TUB</p>
+        {% if session.get('user') %}
+          <button onclick="addToCart({{ product.id }})" style="background:#e26fa7; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer;">Add to Cart</button>
+        {% else %}
+          <button onclick="window.location.href='{{ url_for('login') }}'" style="background:#ffb6c1; color:white; border:none; padding:8px 20px; border-radius:20px; cursor:pointer;">Login to Add</button>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <p style="margin-top:30px;">
+    <a href="{{ url_for('products_page') }}" style="color:#e26fa7; text-decoration:none; font-weight:bold;">View all products →</a>
+  </p>
+</section>
+
+<!-- ====== FREE PATTERN SECTION ====== -->
+<section id="free_pattren" style="background-color:#fff4f8; padding:60px 20px; text-align:center;">
+  <h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">🎀 Free Patterns 🎀</h2>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:25px; max-width:1000px; margin:auto;">
+    <div class="product_i">
+      <img src="{{ url_for('static', filename='images/dragon.jpg') }}" alt="Pattern Babe Dragon" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
+      <h3>Pattern Babe Dragon</h3>
+      <p class="price">140.5 TUB</p>
+      <button class="btn">Buy now</button>
+    </div>
+
+    <div class="product_i">
+      <img src="{{ url_for('static', filename='images/monkey.jpg') }}" alt="Stuffed Monkey" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
+      <h3>Stuffed Monkey</h3>
+      <p class="price">120 TUB</p>
+      <button class="btn">Buy now</button>
+    </div>
+
+    <div class="product_i">
+      <img src="{{ url_for('static', filename='images/bear.jpg') }}" alt="Pattern Stuffed Bear" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
+      <h3>Pattern Stuffed Bear</h3>
+      <p class="price">120.4 TUB</p>
+      <button class="btn">Buy now</button>
+    </div>
+  </div>
+</section>
+
+<script>
+async function addToCart(id) {
+  const res = await fetch("/api/cart/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ product_id: id })
+  });
+  const data = await res.json();
+  if (data.message) {
+    alert("✅ Added to cart!");
+  } else {
+    alert("❌ " + data.error);
+  }
+}
+</script>
+
+{% endblock %}

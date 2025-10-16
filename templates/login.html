@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Crochet Rory Store</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #ffe4ef;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-box {
+      background: #fff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 320px;
+    }
+
+    h2 {
+      color: #e26fa7;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    input {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      background-color: #e26fa7;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background-color: #c85a8c;
+    }
+
+    p {
+      margin-top: 15px;
+      color: #555;
+    }
+
+    a {
+      color: #e26fa7;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* 💡 تصميم الأخطاء */
+    .error-text {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: -5px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Welcome Back 💕</h2>
+
+    <!-- ✅ رسائل الفلاش داخل صفحة تسجيل الدخول -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div style="background-color:#ffe4ef; color:#e26fa7; border:1px solid #e26fa7; 
+                      border-radius:10px; padding:10px; margin-bottom:15px;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      {{ form.hidden_tag() }}
+
+      <!-- 📧 البريد الإلكتروني -->
+      {{ form.email.label }}<br>
+      {{ form.email(size=32) }}
+      {% for error in form.email.errors %}
+        <div class="error-text">⚠️ {{ error }}</div>
+      {% endfor %}
+
+      <!-- 🔑 كلمة المرور -->
+      {{ form.password.label }}<br>
+      {{ form.password(size=32) }}
+      {% for error in form.password.errors %}
+        <div class="error-text">⚠️ {{ error }}</div>
+      {% endfor %}
+
+      <!-- 🔘 زر تسجيل الدخول -->
+      {{ form.submit(class_='btn') }}
+    </form>
+
+    <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
+  </div>
+</body>
+</html>

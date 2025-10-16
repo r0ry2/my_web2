@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crochet Rory Store - Products</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    ✨ Use code: Rory for 2% off! ✨
+  </header>
+
+  <nav class="navbar">
+    <div class="logo">Crochet Rory Store</div>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/cart">Cart</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="search-container">
+    <input type="text" id="search" placeholder="Search...">
+    <button type="button" id="searchBtn">🔍</button>
+  </div>
+
+  <section class="product-grid">
+    {% for product in products %}
+      <div class="product">
+        <img src="{{ product.image }}" alt="{{ product.name }}">
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <p class="price">{{ product.price }} TUB</p>
+        <div class="rating">★★★★★</div>
+        <button onclick="addToCart({{ product.id }})">Buy now</button>
+      </div>
+    {% endfor %}
+  </section>
+
+  <footer>
+    © 2024 Crochet Rory Store. All rights reserved.
+  </footer>
+
+  <script>
+    function addToCart(productId) {
+      fetch('/api/cart/add', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ product_id: productId, quantity: 1 })
+      })
+      .then(res => res.json())
+      .then(data => alert("Added to cart! 🛍️"))
+      .catch(err => console.error(err));
+    }
+  </script>
+</body>
+</html>
