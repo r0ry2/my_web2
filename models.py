@@ -31,7 +31,9 @@ class User(db.Model):
     username = db.Column(db.String(150), unique=True, nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
-    role = db.Column(db.String(20), default='user')  # user أو admin
+    role = db.Column(db.String(20), default='user')
+    confirmed = db.Column(db.Boolean, default=False)  # ✅ أضفنا هذا السطر الجديد
+
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

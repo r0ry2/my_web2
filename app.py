@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from config import Config
 from dotenv import load_dotenv
 import os
+from flask_mail import Mail
 
 # تحميل ملف .env
 load_dotenv()
@@ -12,10 +13,21 @@ load_dotenv()
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# أو نستخدم القيم من .env مباشرة (في حال ما كانت في Config)
+# 🔹 إعداد القيم الأساسية
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'supersecretkey')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:///store.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/fis016/Downloads/my_web/data.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# 🔹 إعداد البريد (محلي فقط)
+app.config['MAIL_SERVER'] = 'localhost'
+app.config['MAIL_PORT'] = 8028
+app.config['MAIL_DEFAULT_SENDER'] = 'noreply@crochetrory.com'
+
+# 🔹 تهيئة البريد
+mail = Mail(app)
+
+# ✅ تأكيد قاعدة البيانات المستخدمة
+print("📁 Using database file:", app.config['SQLALCHEMY_DATABASE_URI'])
 
 # 🟢 استيراد قاعدة البيانات من models
 from models import db, Product, Order, OrderItem, User
