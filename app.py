@@ -42,3 +42,10 @@ from routes import *
 # 🟢 تشغيل التطبيق
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+from models import Message, Product, User, Cart, Order, OrderItem  # <-- تأكدي إن Message هنا
+
+with app.app_context():
+    db.create_all()
+    print("✅ Database tables created successfully!")

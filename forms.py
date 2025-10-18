@@ -4,6 +4,25 @@ from wtforms.validators import DataRequired, Email, Length, EqualTo       # <-- 
 from wtforms import StringField, FloatField, TextAreaField, SubmitField
 from flask_wtf.file import FileField, FileAllowed
 from flask_wtf.file import FileField, FileAllowed
+from wtforms import SelectField
+
+class ProductForm(FlaskForm):
+    name = StringField('Product Name', validators=[DataRequired()])
+    price = FloatField('Price', validators=[DataRequired()])
+    description = TextAreaField('Description', validators=[DataRequired()])
+    image = FileField('Product Image')
+
+    # 🆕 خيار النشر
+    publish_location = SelectField(
+        'Publish Product',
+        choices=[
+            ('both', 'Show in Home + Products pages'),
+            ('products_only', 'Show only in Products page')
+        ],
+        default='products_only'
+    )
+
+    submit = SubmitField('Save')
 
 
 class RegisterForm(FlaskForm):
@@ -20,12 +39,6 @@ class LoginForm(FlaskForm):
 
 
 
-class AddProductForm(FlaskForm):
-    name = StringField('Product Name', validators=[DataRequired(), Length(min=2, max=100)])
-    price = StringField('Price', validators=[DataRequired()])
-    description = StringField('Description')
-    image = FileField('Product Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
-    submit = SubmitField('Save')
 
 
 

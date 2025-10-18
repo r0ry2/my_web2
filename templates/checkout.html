@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Order Confirmation | Crochet Rory Store</title>
   <style>
     body {
@@ -48,9 +48,15 @@
       padding: 10px;
       border-radius: 10px;
       display: inline-block;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       color: #e26fa7;
       font-weight: bold;
+    }
+
+    .customer-info {
+      margin: 10px 0 20px;
+      color: #555;
+      font-size: 1rem;
     }
 
     ul {
@@ -61,6 +67,7 @@
 
     li {
       display: flex;
+      align-items: center;
       justify-content: space-between;
       background: #fff4f8;
       padding: 12px 20px;
@@ -68,6 +75,19 @@
       border-radius: 10px;
       font-size: 1rem;
       color: #555;
+    }
+
+    .product-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .product-info img {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      object-fit: cover;
     }
 
     .total {
@@ -109,11 +129,17 @@
     <h2>🧺 Your Order Details</h2>
     <p class="order-id">Order ID: <span id="order-id">...</span></p>
 
+    <div class="customer-info">
+      <p><strong>👤 Name:</strong> <span id="customer-name">...</span></p>
+      <p><strong>📍 Address:</strong> <span id="customer-address">...</span></p>
+    </div>
+
     <ul id="order-items"></ul>
 
     <p class="total">Total: <span id="order-total"></span> TUB</p>
 
-    <button class="back-btn" onclick="window.location.href='/'">Continue Shopping 🛍️</button>
+    <button class="back-btn" onclick="window.location.href='{{ url_for('home_logged') }}'">Continue Shopping 🛍️</button>
+
   </div>
 
   <footer>© 2024 Crochet Rory Store. All rights reserved.</footer>
@@ -131,16 +157,22 @@
       const data = await res.json();
 
       document.getElementById("order-id").textContent = data.id;
+      document.getElementById("customer-name").textContent = data.customer_name;
+      document.getElementById("customer-address").textContent = data.address;
       document.getElementById("order-total").textContent = data.total.toFixed(2);
 
       const list = document.getElementById("order-items");
       data.items.forEach(item => {
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <span>${item.name} x${item.quantity}</span>
-          <span>${(item.price * item.quantity).toFixed(2)} TUB</span>`;
-        list.appendChild(li);
-      });
+  const li = document.createElement("li");
+  li.innerHTML = `
+    <div class="product-info">
+      <img src="/static/images/${item.image}" alt="${item.name}">
+      <span>${item.name} ×${item.quantity}</span>
+    </div>
+    <span>${(item.price * item.quantity).toFixed(2)} TUB</span>`;
+  list.appendChild(li);
+});
+
     }
 
     loadOrderDetails();

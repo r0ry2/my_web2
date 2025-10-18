@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Welcome | Crochet Rory Store{% endblock %}
+{% block content %}
+
+<!-- ====== NAVBAR ====== -->
+<nav style="background-color:white; width:80%; margin:20px auto; border-radius:25px; padding:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+  <ul style="list-style:none; display:flex; justify-content:center; align-items:center; gap:40px; margin:0; padding:0; font-weight:bold;">
+    <li><a href="{{ url_for('home_logged') }}" style="text-decoration:none; color:#e26fa7;">Home</a></li>
+    <li><a href="{{ url_for('products_page') }}" style="text-decoration:none; color:#333;">Products</a></li>
+    <li><a href="{{ url_for('cart_page') }}" style="text-decoration:none; color:#333;">🛒 Cart</a></li>
+    <li><a href="{{ url_for('contact_page') }}" style="text-decoration:none; color:#333; font-weight:bold;">Contact</a></li>
+    <li><a href="{{ url_for('logout') }}" style="text-decoration:none; color:#333;">Logout</a></li>
+  </ul>
+</nav>
+
+<!-- ====== WELCOME SECTION ====== -->
+<section style="text-align:center; padding:60px 20px; background-color:#fff0f6; border-radius:20px; width:90%; margin:auto;">
+  <h1 style="color:#e26fa7;">Welcome back, {{ user }} 💕</h1>
+  <p style="color:#555; font-size:1.2rem;">Explore your favorite crochet collections!</p>
+
+  <div style="margin-top:30px;">
+    <a href="{{ url_for('products_page') }}" 
+       style="background-color:#e26fa7; color:white; border:none; padding:12px 30px; border-radius:25px; font-size:1.1rem; text-decoration:none;">
+       🧶 Find Your Favorite Product
+    </a>
+  </div>
+</section>
+
+<!-- ====== HERO SECTION ====== -->
+<section id="home" class="hero" style="position:relative; text-align:center; margin-top:60px;">
+  <img src="{{ url_for('static', filename='images/cattt.jpg') }}" alt="image" class="hero_image" style="width:90%; border-radius:20px; max-height:500px; object-fit:cover;">
+  <div class="hero-content" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#e26fa7;">
+    <h1 style="font-size:70px; padding:10px 20px; border-radius:15px;">
+      Welcome back to Crochet Rory 🧶
+    </h1>
+    <button onclick="window.location.href='{{ url_for('products_page') }}'" 
+            style="margin-top:20px; background-color:#e26fa7; color:white; border:none; padding:12px 30px; border-radius:25px; cursor:pointer;">
+      Find your favorite product
+    </button>
+  </div>
+</section>
+
+
+<!-- ====== ABOUT ME ====== -->
+<section id="about-me" style="background-color:#fff0f6; padding:50px 20px; text-align:center; margin-top:60px;">
+  <h2 style="color:#e26fa7; font-size:2rem;">✨ About Me ✨</h2>
+  <div style="max-width:900px; margin:auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:30px;">
+    <img src="{{ url_for('static', filename='images/tu.jpg') }}" alt="Crochet Art" style="width:260px; border-radius:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+    <p style="flex:1; min-width:300px; text-align:left; font-size:1.1rem; line-height:1.8; color:#444;">
+      Welcome to <strong>Rory’s world</strong>, where craftsmanship meets creativity!  
+      Each creation reflects love, patience, and attention to every detail 🧶💗  
+      Thank you for being part of this cozy handmade journey ✨
+    </p>
+  </div>
+</section>
+
+
+<!-- ====== REVIEWS ====== -->
+<section id="reviews" style="background-color:#ffcbe1; padding:60px 20px; text-align:center;">
+  <h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">💬 Customer Reviews 💬</h2>
+
+  <div style="max-width:800px; margin:auto; display:flex; flex-direction:column; gap:20px;">
+    <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+      <p style="color:#fbc02d;">★★★★★</p>
+      <p>I bought a bouquet of flowers and gave it to my friend for her birthday. She loved it!</p>
+      <strong>- Hana</strong>
+    </div>
+
+    <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+      <p style="color:#fbc02d;">★★★★★</p>
+      <p>I ordered a cat necklace for my school bag and haven't received it yet. I'm so excited, and I'm sure I'll love it!</p>
+      <strong>- Riham</strong>
+    </div>
+
+    <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+      <p style="color:#fbc02d;">★★★★★</p>
+      <p>Such cute designs! Everything looks exactly like the photos. Highly recommend 💕</p>
+      <strong>- Sara</strong>
+    </div>
+  </div>
+</section>
+
+
+<script>
+  async function addToCart(id) {
+    const res = await fetch("/api/cart/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ product_id: id })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert("✅ Added to cart!");
+    } else {
+      alert("❌ " + data.error);
+    }
+  }
+</script>
+
+{% endblock %}

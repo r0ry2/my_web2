@@ -5,10 +5,10 @@
 <!-- ====== NAVBAR ====== -->
 <nav style="background-color:white; width:80%; margin:20px auto; border-radius:25px; padding:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
   <ul style="list-style:none; display:flex; justify-content:center; align-items:center; gap:40px; margin:0; padding:0; font-weight:bold;">
-    <li><a href="/" style="text-decoration:none; color:#333;">Home</a></li>
+    <li><a href="{{ url_for('home_logged') }}" style="text-decoration:none; color:#333; font-weight:bold; transition:0.3s;" onmouseover="this.style.color='#e26fa7'" onmouseout="this.style.color='#333'">Home</a></li>
     <li><a href="{{ url_for('products_page') }}" style="text-decoration:none; color:#333;">Products</a></li>
     <li><a href="{{ url_for('cart_page') }}" style="text-decoration:none; color:#e26fa7;">Cart</a></li>
-    <li><a href="#contact" style="text-decoration:none; color:#333;">Contact</a></li>
+    <li><a href="{{ url_for('contact_page') }}" style="text-decoration:none; color:#333; font-weight:bold;">Contact</a></li>
     {% if session.get('user') %}
       <li><a href="{{ url_for('logout') }}" style="text-decoration:none; color:#333;">Logout</a></li>
     {% else %}

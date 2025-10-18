@@ -5,6 +5,55 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crochet Rory Store - Products</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .quantity-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .quantity-btn {
+      background-color: #e26fa7;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .quantity-btn:hover {
+      background-color: #ff8fc2;
+    }
+
+    .quantity-display {
+      font-size: 16px;
+      font-weight: bold;
+      width: 30px;
+      text-align: center;
+      color: #333;
+    }
+
+    .product button {
+      background-color: #e26fa7;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    .product button:hover {
+      background-color: #ff8fc2;
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -14,7 +63,7 @@
   <nav class="navbar">
     <div class="logo">Crochet Rory Store</div>
     <ul>
-      <li><a href="/">Home</a></li>
+      <li><a href="{{ url_for('home_logged') }}">Home</a></li>
       <li><a href="/cart">Cart</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
@@ -28,11 +77,19 @@
   <section class="product-grid">
     {% for product in products %}
       <div class="product">
-        <img src="{{ product.image }}" alt="{{ product.name }}">
+        <img src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.name }}">
         <h2>{{ product.name }}</h2>
         <p>{{ product.description }}</p>
         <p class="price">{{ product.price }} TUB</p>
         <div class="rating">★★★★★</div>
+
+        <!-- ✅ أزرار الكمية -->
+        <div class="quantity-box">
+          <button class="quantity-btn" onclick="changeQuantity({{ product.id }}, -1)">−</button>
+          <span id="qty-{{ product.id }}" class="quantity-display">1</span>
+          <button class="quantity-btn" onclick="changeQuantity({{ product.id }}, 1)">+</button>
+        </div>
+
         <button onclick="addToCart({{ product.id }})">Buy now</button>
       </div>
     {% endfor %}
@@ -43,14 +100,25 @@
   </footer>
 
   <script>
+    // 🔹 تغيير الكمية في الواجهة
+    function changeQuantity(productId, change) {
+      const qtyElement = document.getElementById(`qty-${productId}`);
+      let qty = parseInt(qtyElement.textContent);
+      qty = Math.max(1, qty + change); // لا تقل عن 1
+      qtyElement.textContent = qty;
+    }
+
+    // 🔹 إضافة إلى السلة بالكمية المحددة
     function addToCart(productId) {
+      const qty = parseInt(document.getElementById(`qty-${productId}`).textContent);
+      
       fetch('/api/cart/add', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ product_id: productId, quantity: 1 })
+        body: JSON.stringify({ product_id: productId, quantity: qty })
       })
       .then(res => res.json())
-      .then(data => alert("Added to cart! 🛍️"))
+      .then(data => alert(`🛍️ Added ${qty} item(s) to cart!`))
       .catch(err => console.error(err));
     }
   </script>
