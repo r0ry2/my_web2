@@ -1,0 +1,59 @@
+{% extends "admin/admin_base.html" %}
+{% block title %}Manage Reviews | Admin Panel{% endblock %}
+
+{% block content %}
+
+<div style="max-width:1200px; margin:40px auto; padding:30px; background:#fff0f6; border-radius:20px; box-shadow:0 4px 20px rgba(0,0,0,0.1);">
+  <h1 style="text-align:center; color:#e26fa7;">💬 Manage Customer Reviews</h1>
+  <p style="text-align:center; color:#777;">View, reply, or delete customer feedback below 🌸</p>
+  <hr style="margin:20px 0; border:1px solid #ffd6e8;">
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div style="background:#ffe6f0; color:#e26fa7; padding:10px 15px; border-radius:10px; text-align:center; margin-bottom:20px;">
+        {% for message in messages %}
+          {{ message }}
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% if reviews %}
+    <div style="display:flex; flex-wrap:wrap; gap:20px; justify-content:center;">
+      {% for review in reviews %}
+        <div style="background:white; width:300px; border-radius:15px; box-shadow:0 2px 6px rgba(0,0,0,0.1); padding:20px; position:relative;">
+          <h3 style="color:#e26fa7; margin-bottom:8px;">{{ review.name }}</h3>
+          <p style="color:#444;">{{ review.message }}</p>
+          <p style="color:#f39ac7;">⭐ {{ review.stars }} / 5</p>
+
+          {% if review.admin_reply %}
+            <div style="background:#fff6fa; border-left:4px solid #e26fa7; padding:10px; border-radius:8px; margin-top:10px;">
+              <b style="color:#e26fa7;">Admin Reply:</b>
+              <p style="margin-top:5px; color:#555;">{{ review.admin_reply }}</p>
+            </div>
+          {% else %}
+            <form action="{{ url_for('reply_review', id=review.id) }}" method="POST" style="margin-top:10px;">
+              <textarea name="reply" placeholder="Write your reply..." required
+                        style="width:100%; border-radius:10px; border:1px solid #ffd6e8; padding:8px; resize:none; font-size:14px;"></textarea>
+              <button type="submit"
+                      style="background:#e26fa7; color:white; border:none; padding:8px 15px; border-radius:20px; margin-top:8px; cursor:pointer;">
+                💌 Send Reply
+              </button>
+            </form>
+          {% endif %}
+
+          <form action="{{ url_for('delete_review', id=review.id) }}" method="POST" style="margin-top:10px;">
+            <button type="submit"
+                    style="background:#f28b82; color:white; border:none; padding:8px 15px; border-radius:20px; cursor:pointer;">
+              🗑️ Delete
+            </button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p style="text-align:center; color:#777;">No reviews yet 💭</p>
+  {% endif %}
+</div>
+
+{% endblock %}

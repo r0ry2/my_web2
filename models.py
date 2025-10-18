@@ -109,3 +109,13 @@ class Message(db.Model):
     email = db.Column(db.String(100), nullable=False)
     message = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)
+
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    stars = db.Column(db.Integer, nullable=False, default=5)
+    admin_reply = db.Column(db.Text)  # ✅ رد الأدمن
+
+
+ 

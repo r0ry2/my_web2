@@ -17,6 +17,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from models import db, Product, AddProductForm
 from models import Message
+from models import db, Review
+
 
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -455,11 +457,7 @@ def api_checkout():
 # ==========================================
 # USER HOME (after login)
 # ==========================================
-@app.route('/home_logged')
-def home_logged():
-    # show products suitable for home (both + home_only)
-    products = Product.query.filter(Product.publish_location.in_(['both', 'home_only'])).all()
-    return render_template("home_logged.html", products=products)
+
 
 
 # ==========================================
@@ -666,6 +664,75 @@ def admin_messages():
     messages = Message.query.order_by(Message.id.desc()).all()
     return render_template('admin/admin_messages.html', messages=messages)
 
+
+
+
+
+@app.route("/home_logged", methods=["GET", "POST"])
+def home_logged():
+    # ========== إذا المستخدم أرسل تقييم ==========
+    if request.method == "POST":
+        name = request.form["name"]
+        message = request.form["message"]
+        stars = request.form.get("stars", 5)
+        review = Review(name=name, message=message, stars=int(stars))
+        db.session.add(review)
+        db.session.commit()
+        flash("Thank you for your review! 💕")
+
+   
+   
+    # ========== عرض المنتجات ==========
+    products = Product.query.filter(Product.publish_location.in_(['both', 'home_only'])).all()
+
+    # ========== عرض التقييمات ==========
+    reviews = Review.query.all()
+
+    # ========== إرسال البيانات للصفحة ==========
+    return render_template(
+        "home_logged.html",
+        products=products,
+        reviews=reviews,
+        user=session.get("user")
+    )
+# ===============================
+# 🧶 ADMIN REVIEWS MANAGEMENT
+# ===============================
+
+@app.route("/admin/reviews", methods=["GET", "POST"])
+def admin_reviews():
+    if not session.get("is_admin"):
+        return redirect(url_for("home_logged"))
+
+    reviews = Review.query.all()
+    return render_template("admin/admin_reviews.html", reviews=reviews)
+
+
+# 🗑️ حذف تعليق
+@app.route("/admin/reviews/delete/<int:id>", methods=["POST"])
+def delete_review(id):
+    if not session.get("is_admin"):
+        return redirect(url_for("home_logged"))
+
+    review = Review.query.get_or_404(id)
+    db.session.delete(review)
+    db.session.commit()
+    flash("✅ Review deleted successfully.")
+    return redirect(url_for("admin_reviews"))
+
+
+# 💬 رد الأدمن على تعليق
+@app.route("/admin/reviews/reply/<int:id>", methods=["POST"])
+def reply_review(id):
+    if not session.get("is_admin"):
+        return redirect(url_for("home_logged"))
+
+    reply_text = request.form["reply"]
+    review = Review.query.get_or_404(id)
+    review.admin_reply = reply_text
+    db.session.commit()
+    flash("💌 Reply sent successfully!")
+    return redirect(url_for("admin_reviews"))
 
 
 

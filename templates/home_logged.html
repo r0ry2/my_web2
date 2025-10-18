@@ -55,30 +55,74 @@
 </section>
 
 
-<!-- ====== REVIEWS ====== -->
+<!-- ====== REVIEWS SECTION ====== -->
 <section id="reviews" style="background-color:#ffcbe1; padding:60px 20px; text-align:center;">
   <h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">💬 Customer Reviews 💬</h2>
 
+  <!-- 📝 نموذج كتابة مراجعة -->
+  <div style="max-width:600px; margin:0 auto 40px; background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div style="background-color:#e26fa7; color:white; padding:10px; border-radius:10px; margin-bottom:10px;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('home_logged') }}">
+      <input type="text" name="name" placeholder="Your Name" required 
+             style="padding:10px; width:80%; border-radius:10px; border:1px solid #ccc; margin-bottom:15px;"><br>
+
+      <textarea name="message" placeholder="Write your review here..." required
+                style="padding:10px; width:80%; height:100px; border-radius:10px; border:1px solid #ccc; margin-bottom:15px;"></textarea><br>
+
+      <label style="color:#e26fa7; font-weight:bold;">Your Rating:</label><br>
+      <select name="stars" required 
+              style="padding:10px; border-radius:10px; border:1px solid #ccc; margin:10px 0;">
+        <option value="5">★★★★★ - Excellent</option>
+        <option value="4">★★★★☆ - Good</option>
+        <option value="3">★★★☆☆ - Average</option>
+        <option value="2">★★☆☆☆ - Poor</option>
+        <option value="1">★☆☆☆☆ - Bad</option>
+      </select><br>
+
+      <button type="submit" 
+              style="background-color:#e26fa7; color:white; border:none; padding:10px 20px; border-radius:20px; cursor:pointer;">
+        Submit Review
+      </button>
+    </form>
+  </div>
+
+  <!-- 💬 عرض المراجعات -->
   <div style="max-width:800px; margin:auto; display:flex; flex-direction:column; gap:20px;">
-    <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-      <p style="color:#fbc02d;">★★★★★</p>
-      <p>I bought a bouquet of flowers and gave it to my friend for her birthday. She loved it!</p>
-      <strong>- Hana</strong>
-    </div>
+    {% for review in reviews %}
+      <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:left;">
+        <p style="color:#fbc02d; font-size:1.2rem;">
+          {% for i in range(review.stars) %}★{% endfor %}
+          {% for i in range(5 - review.stars) %}☆{% endfor %}
+        </p>
+        <p style="margin-bottom:5px;">{{ review.message }}</p>
+        <strong style="color:#e26fa7;">- {{ review.name }}</strong>
 
-    <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-      <p style="color:#fbc02d;">★★★★★</p>
-      <p>I ordered a cat necklace for my school bag and haven't received it yet. I'm so excited, and I'm sure I'll love it!</p>
-      <strong>- Riham</strong>
-    </div>
-
-    <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-      <p style="color:#fbc02d;">★★★★★</p>
-      <p>Such cute designs! Everything looks exactly like the photos. Highly recommend 💕</p>
-      <strong>- Sara</strong>
-    </div>
+        {% if review.admin_reply %}
+          <div class="admin-reply" 
+               style="background:#fff5fa; padding:12px; border-radius:10px; margin-top:10px; border-left:4px solid #e26fa7;">
+            <strong style="color:#e26fa7;">💌 Admin reply:</strong>
+            <p style="margin:5px 0 0;">{{ review.admin_reply }}</p>
+          </div>
+        {% endif %}
+      </div>
+    {% else %}
+      <p style="color:#555;">No reviews yet. Be the first to share your experience! 💕</p>
+    {% endfor %}
   </div>
 </section>
+``
+
+
+
 
 
 <script>
